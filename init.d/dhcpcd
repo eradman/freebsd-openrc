@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+# Based on https://github.com/OpenRC/openrc/blob/master/support/init.d.examples/dhcpcd.in
+
+command=/usr/local/sbin/dhcpcd
+pidfile=/var/run/dhcpcd.pid
+command_args=-q
+name="DHCP Client Daemon"
+
+depend()
+{
+	provide net
+	need localmount
+	use logger
+	after bootmisc modules
+	before dns
+}
+
+stop_pre()
+{
+	# When shutting down, kill dhcpcd but preserve network
+	# We do this as /var/run/dhcpcd could be cleaned out when we
+	# return to multiuser.
+	if yesno $RC_GOINGDOWN; then
+		: ${stopsig:=SIGKILL}
+	fi
+}
