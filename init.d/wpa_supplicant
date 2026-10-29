@@ -1,0 +1,29 @@
+#!/sbin/openrc-run
+
+: ${wpa_supplicant_conf:=/etc/wpa_supplicant.conf}
+command=/usr/sbin/wpa_supplicant
+command_args="$wpa_supplicant_args -B -c $wpa_supplicant_conf -D bsd -i wlan0"
+name="WPA Supplicant Daemon"
+
+depend()
+{
+	need localmount
+	use logger
+	after bootmisc modules
+	before dns dhcpcd net
+	keyword -jail -shutdown
+}
+
+start_pre()
+{
+	local wlandev=
+	wlandev=$(sysctl -n net.wlan.devices | awk '{print $1; exit}')
+	ifconfig wlan0 create wlandev $wlandev
+	eend $?
+}
+
+stop() {
+	wpa_cli terminate -i wlan0
+	ifconfig wlan0 destroy
+	eend $?
+}

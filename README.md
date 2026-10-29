@@ -25,11 +25,16 @@ Build/install OpenRC
     meson compile
     meson install --destdir /
 
-Install base services
+Install FreeBSD services
 
     cd ~/freebsd-openrc-master
-    for svc in dhcpcd ntpd sshd zfs; do
+    for svc in `ls init.d`; do
       install -m 755 init.d/$svc /etc/init.d/
+    done
+
+Activate base services
+
+    for svc in dhcpcd ntpd sshd zfs; do
       rc-update add $svc default
     done
 
