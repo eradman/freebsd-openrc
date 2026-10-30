@@ -1,0 +1,45 @@
+#!/sbin/openrc-run
+# Based on https://gitlab.alpinelinux.org/alpine/aports/-/blob/master/main/cups/cupsd.initd
+
+name="CUPS"
+
+extra_commands="checkconfig"
+extra_started_commands="reload"
+
+description_checkconfig="Test the configuration file"
+description_reload="Reload"
+
+: ${cfgfile:="/usr/local/etc/cups/cupsd.conf"}
+
+command="/usr/local/sbin/cupsd"
+command_args="-f -c $cfgfile"
+command_background="yes"
+
+pidfile="/var/run/cups/$RC_SVCNAME.pid"
+
+depend() {
+	use net
+	before nfs
+	need dbus
+	after logger
+}
+
+checkconfig() {
+	$command $command_args -t >/dev/null 2>&1 \
+		|| $command $command_args -t
+}
+
+start_pre() {
+	checkconfig || return 1
+
+	checkpath -q -d -m 0775 -o root:cups /var/cache/cups
+	checkpath -q -d -m 0775 -o root:cups /var/cache/cups/rss
+	checkpath -q -d -m 0755 -o root:cups /var/run/cups
+	checkpath -q -d -m 0511 -o cups:wheel /var/run/cups/certs
+}
+
+reload() {
+	ebegin "Reloading $name"
+	start-stop-daemon --signal HUP --pidfile "$pidfile"
+	eend $?
+}
