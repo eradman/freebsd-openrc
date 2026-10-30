@@ -2,7 +2,7 @@
 # Based on https://github.com/OpenRC/openrc/blob/master/support/init.d.examples/dhcpcd.in
 
 command=/usr/local/sbin/dhcpcd
-pidfile=/var/run/dhcpcd.pid
+pidfile=/var/run/dhcpcd/pid
 command_args=-q
 name="DHCP Client Daemon"
 
