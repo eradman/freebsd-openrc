@@ -1,14 +1,28 @@
 FreeBSD + OpenRC
 ================
 
-Prerequisites
--------------
+Daemons from base:
 
-    pkg install -y meson ninja pkgconf
-    pkg install -y dhcpcd
+* ntpd
+* sshd
+* wpa_supplicant
+
+System mangement from base:
+
+* zfs
+
+Daemons from ports:
+
+* cupsd
+* dbus
+* dhcpcd
 
 Installation
 ------------
+
+Install build tools
+
+    pkg install -y meson ninja pkgconf
 
 Fetch sources
 
@@ -20,8 +34,8 @@ Fetch sources
 Build/install OpenRC
 
     cd ~/openrc-0.64.1
-    meson setup builddir
-    cd builddir
+    meson setup build
+    cd build
     meson compile
     meson install --destdir /
 
@@ -29,17 +43,31 @@ Install FreeBSD services
 
     cd ~/freebsd-openrc-master
     for svc in `ls init.d`; do
-      install -m 755 init.d/$svc /etc/init.d/
+      install -v -m 755 init.d/$svc /etc/init.d/
     done
 
-Activate base services
-
-    for svc in dhcpcd ntpd sshd zfs; do
-      rc-update add $svc default
-    done
-
-Final steps
+    rc-update add zfs default
+    rc-update add sshd default
 
     vi /etc/conf.d/hostname
-    sed -i -E 's/slaac private/#slaac private/g' /usr/local/etc/dhcpcd.conf
     reboot
+
+Networking
+----------
+
+Optionally, install dhcpcd to facilitate automatic IPv4 and IPv6 network configuration
+
+    pkg install -y dhcpcd
+
+Add networking services
+
+    rc-update add dhcpcd default
+    rc-update add ntpd default
+    openrc default
+
+Adjustments
+-----------
+
+To reduce chatter on the console edit `/etc/syslog.conf` and remove `*.err,`
+
+    kern.warning;auth.notice;mail.crit    /dev/console
