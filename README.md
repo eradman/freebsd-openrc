@@ -5,7 +5,7 @@ Daemons from base:
 
 * ntpd
 * sshd
-* wpa_supplicant
+* wlan
 
 System mangement from base:
 
@@ -22,7 +22,7 @@ Installation
 
 Install build tools
 
-    pkg install -y meson ninja pkgconf
+    pkg install -y meson ninja
 
 Fetch sources
 
