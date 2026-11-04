@@ -9,6 +9,7 @@ Daemons from base:
 
 System mangement from base:
 
+* random
 * zfs
 
 Daemons from ports:
@@ -46,7 +47,9 @@ Install FreeBSD services
       install -v -m 755 init.d/$svc /etc/init.d/
     done
 
-    rc-update add zfs default
+    rc-update delete urandom boot
+    rc-update add random boot
+    rc-update add zfs boot
     rc-update add sshd default
 
     vi /etc/conf.d/hostname

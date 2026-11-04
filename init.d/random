@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+
+description="Initializes the random number generator."
+
+depend()
+{
+	after clock
+	need localmount
+	keyword -docker -podman -jail -lxc
+}
+
+start()
+{
+	[ -f /entropy ] || return 0
+	dd if=/entropy of=/dev/random bs=4096 status=none
+	return $?
+}
+
+stop()
+{
+	# /usr/libexec/save-entropy run by cron
+	ebegin "Saving random seed"
+	dd if=/var/db/entropy/saved-entropy.1 of=/entropy bs=4096 count=1 status=none
+	dd if=/var/db/entropy/saved-entropy.2 of=/boot/entropy bs=4096 count=1 status=none
+	eend $?
+}
