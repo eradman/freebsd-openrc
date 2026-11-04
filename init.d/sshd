@@ -33,21 +33,11 @@ sshd_keygen_alg()
 	fi
 }
 
-keygen()
+start_pre()
 {
 	sshd_keygen_alg rsa
 	sshd_keygen_alg ecdsa
 	sshd_keygen_alg ed25519
-}
-
-configtest()
-{
-	einfo "Performing sanity check on ${name} configuration."
+	# config test
 	eval ${command} ${command_args} -t
-}
-
-start_pre()
-{
-	keygen
-	configtest
 }
