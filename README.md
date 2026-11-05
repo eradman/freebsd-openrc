@@ -3,6 +3,7 @@ FreeBSD + OpenRC
 
 Daemons from base:
 
+* cron
 * ntpd
 * sshd
 * wlan
@@ -49,6 +50,7 @@ Install FreeBSD services
 
     rc-update delete urandom boot
     rc-update add random boot
+    rc-update add cron boot
     rc-update add zfs boot
     rc-update add sshd default
 

@@ -1,5 +1,5 @@
 #!/sbin/openrc-run
-# Based on https://github.com/trueos/trueos/commit/ce45f7cee0f02e6e9d6b86ca5a0b865c69feb39e
+# Based on https://github.com/freebsd/freebsd-src/blob/main/libexec/rc/rc.d/sshd
 
 name="sshd"
 command=/usr/sbin/sshd
